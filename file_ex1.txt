@@ -1,0 +1,48 @@
+//#include <iostream>
+//#include <string>
+//#include <fstream>
+
+#include "stdio.h"
+#include "string.h"
+//using namespace std;
+
+void getFirstLast(char[], char[]);
+
+int main()
+{
+    char alpha_first[15], alpha_last[15];
+
+    getFirstLast(alpha_first, alpha_last);
+
+    puts("The first student is");
+    printf("%s", alpha_first);
+    puts("");
+
+    printf("The last student is %s\n", alpha_last);
+
+    return 0;
+}
+
+void getFirstLast(char Afirst[], char Alast[])
+{
+    FILE* input;
+    input = fopen("students.txt", "r");
+
+    char name[15];
+
+    fscanf(input, "%s", name);
+    strcpy(Afirst, name);
+    strcpy(Alast, name);
+
+    while (!feof(input))
+    {
+        fscanf(input, "%s", name);
+        if (strcmp(name, Afirst) < 0)
+            strcpy(Afirst, name);
+        else if (strcmp(name, Alast) > 0)
+            strcpy(Alast, name);
+    }
+
+    fclose(input);
+
+}

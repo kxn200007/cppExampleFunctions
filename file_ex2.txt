@@ -1,0 +1,42 @@
+//#include <iostream>
+#include <iostream>
+#include <string>
+#include <fstream>
+using namespace std;
+
+void getFirstLast(string&, string&, ifstream&);
+
+int main()
+{
+    int num_students;
+    string fname, lname;
+
+    ifstream input;
+    input.open("students.txt");
+
+    ofstream output("leaders.txt");
+
+    getFirstLast(fname, lname, input);
+
+    output << "The first student is " << fname << endl;
+    output << "The last student is " << lname << endl;
+
+    return 0;
+}
+
+void getFirstLast(string& first, string& last, ifstream& in)
+{
+    string name;
+
+    in >> name;
+    first = last = name;
+
+    while (input >> name)
+    {
+        if (name < first)
+            first = name;
+        else if (name > last)
+            last = name;
+    }
+
+}

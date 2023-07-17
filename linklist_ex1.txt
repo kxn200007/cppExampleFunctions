@@ -1,0 +1,158 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <iomanip>
+using namespace std;
+
+struct student
+{
+    string name;
+    string ID;
+    int *tests;
+    float avg = 0.0;
+    char grade = ' ';
+    student* next = nullptr;
+};
+
+void getStudents(student*&);  //fill in linked list from file
+void calcAvg(student*);       //calculate average of each student
+void outputStudents(student*); //print out linked list
+student* graduate(student*&, string); //find and remove element in linked list
+
+int main()
+{
+    student *head = nullptr;
+
+    getStudents(head);
+    calcAvg(head);
+    cout << "Student Roster" << endl;
+    outputStudents(head);
+
+    student* grad = graduate(head, "Cyclops");
+    if (grad)  //if element found and removed
+    {
+        cout << endl << endl <<"Graduating Students: " << endl << grad->name << endl << grad->avg << endl << grad->grade << endl << endl;
+        delete [] grad->tests;  //delete dynamic array
+        delete grad;  //delete node
+    }
+
+    cout << endl << "Student Roster" << endl;
+    outputStudents(head);  //show that linked list changed
+
+    while (head)    //delete linked list
+    {
+        student* hold = head;
+        head = head->next;
+        delete [] hold->tests;
+        delete hold;
+    }
+
+
+    return 0;
+}
+
+void getStudents(student *&h)   //pass head in by reference because it may move
+{
+
+
+    ifstream input("students.txt");
+    string first, last;
+    while (!input.eof())
+    {
+        student* newNode = new student; //create new node
+        newNode->tests = new int[5];    //create dynamic array in node
+
+        input >> first;
+        input >> last;
+        first += " " + last;
+        newNode->name = first;
+        input >> newNode->ID;
+        for (int j=0; j<5; j++)
+        {
+            input >> *newNode->tests;
+            (newNode->tests)++; //pointer arithmetic in the node
+        }
+        newNode->tests -= 5;    //reset pointer to beginning of array
+
+        if (!h) //if empty list
+            h = newNode;
+        else if(newNode->name < h->name)  //add at beginning of list
+        {
+            newNode->next = h;  //connect node to head
+            h = newNode;        //move head to new node
+        }
+        else        //add in middle or end of list
+        {
+            student *p2;
+            p2 = h;
+            while (p2->next && p2->next->name < newNode->name)  //traverse list - stop when next name is > name in new node
+            {
+                p2 = p2->next;
+            }
+            newNode->next = p2->next;   //link new node to node after insertion point
+            p2->next = newNode;         //link node before insertion point to new node
+
+        }
+    }
+}
+
+void calcAvg(student *ptr)
+{
+    int sum;
+    while (ptr)
+    {
+        sum = 0;
+        for (int j=0; j<5; j++)
+            sum += ptr->tests[j];   //sum all grades
+        ptr->avg = sum/5.0;         //calculate average
+
+        if (ptr->avg >= 90)         //determine final grade
+            ptr->grade = 'A';
+        else if (ptr->avg >= 80)
+            ptr->grade = 'B';
+        else if (ptr->avg >= 70)
+            ptr->grade = 'C';
+        else if (ptr->avg >= 60)
+            ptr->grade = 'D';
+        else
+            ptr->grade = 'F';
+        ptr = ptr->next;
+    }
+}
+
+void outputStudents(student *ptr)
+{
+    while (ptr)     //traverse through list
+    {
+        cout << ptr->name << endl << ptr->ID << endl << ptr->avg << endl << ptr->grade << endl << endl;
+        ptr = ptr->next;
+    }
+}
+
+student* graduate(student* &h, string id)
+{
+    if (!h) //empty list
+        return nullptr;
+    else if(h->ID == id) //if name is in head node
+    {
+        student* hold = h;  //hold onto node
+        h = h->next;        //move head to next node
+        hold->next = nullptr; //disconnect node from list
+        return hold;
+    }
+    else                //if node is in middle or end of list
+    {
+        student* p1 = h;
+        while (p1->next && p1->next->ID != id)  //loop until next node has name we want to find or end of list
+            p1 = p1->next;
+        if (p1->next->ID == id) //if name found in next node
+        {
+            student* hold = p1->next;   //hold onto node to be removed
+            p1->next = p1->next->next;  //connect node before to node after removed node
+            hold->next = nullptr;       //disconnect removed node
+            return hold;
+        }
+    }
+
+    return nullptr;  //if end of list encountered, name not found
+}

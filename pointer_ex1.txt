@@ -1,0 +1,44 @@
+#include <iostream>
+
+int* reverseArray(int *old, int size)
+{
+    //create new array
+    int *newarr = new int[size];
+    //forloop - create reverse copy
+    //int *anchor = newarr;
+    old += size-1;
+
+    for (int i = 0; i < size; i++)
+    {
+        //newarr[i] = old[size-i-1];
+
+        //copy element from old array to new array
+        *newarr = *old;
+        old--;   // old -= 1  or old = old - 1
+        newarr++;
+
+    }
+
+    //newarr -= size;
+
+    return newarr - size;
+
+}
+
+int main()
+{
+
+    int array1[10] = {1,3,5,7,9,2,4,6,8,0};
+    //arrays constant pointers - address cannot change
+
+
+    int *ptr2 = reverseArray(array1, 10);
+
+    for (int i = 0; i < 10; i++)
+    {
+        std::cout << *(ptr2+i) << std::endl;
+    }
+
+
+    delete [] ptr2;
+

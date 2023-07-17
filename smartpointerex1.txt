@@ -1,0 +1,47 @@
+#include <memory>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+
+    unique_ptr<int> ptr(new int[10]);
+    unique_ptr<int> ptr2;
+    //ptr2 = ptr;
+
+    for (int i = 0; i < 10; i++)
+    {
+        *(ptr.get() + i) = i+10;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        cout << *(ptr.get() + i) << " ";
+    }
+    cout << endl;
+
+    cout << *ptr << endl;
+
+    shared_ptr<int[]> sptr(new int[10]);
+    shared_ptr<int[]> sptr2;
+    weak_ptr<int[]> wptr(sptr);
+    sptr2 = sptr;
+
+    for (int i = 0; i < 10; i++)
+    {
+        *(sptr.get() + i) = i*10;
+    }
+
+    sptr = nullptr;
+
+    for (int i = 0; i < 10; i++)
+    {
+        cout << *(sptr2.get() + i) << " ";
+    }
+    cout << endl;
+
+    wptr++;
+    cout << *(wptr.lock(wptr.get()+1));
+
+
+}

@@ -1,0 +1,47 @@
+#include "list.h"
+using namespace std;
+
+LinkedList::LinkedList()
+{
+		
+}
+
+
+bool LinkedList::add(int val)
+{
+	Node * newNode;
+
+	newNode = new Node;  //Creates new node
+	newNode->data = val; //Stores val
+	newNode->next = nullptr;
+
+	head = nullptr;
+
+	if (head == nullptr)
+	{
+		head = newNode;
+		tail = newNode;
+	}
+	else
+	{
+		tail->next = newNode; //Insert new node at the end of the list
+		tail = newNode;
+	}
+
+
+	return head;
+}
+
+
+void LinkedList::print() const
+{
+	Node * current;
+
+	current = head;
+
+	while (current != nullptr)
+	{
+		cout << current->data << endl;
+		current = current->next;
+	}
+}
